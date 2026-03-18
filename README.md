@@ -1,36 +1,190 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 👥 Team Members — User Management System
 
-## Getting Started
+A full-stack user management application built with **Next.js**, **TypeScript**, **Prisma ORM**, and **SQLite**.
 
-First, run the development server:
+---
+
+## 🚀 Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Frontend | Next.js 16 + React + TypeScript |
+| Styling | Tailwind CSS |
+| Backend | Next.js API Routes |
+| ORM | Prisma v7 |
+| Database | SQLite (local) |
+| Icons | Lucide React |
+
+---
+
+## ✨ Features
+
+- ✅ View all team members in a clean table
+- ✅ Add new members with form validation
+- ✅ Edit existing member details
+- ✅ Delete members with confirmation dialog
+- ✅ Search by name or email
+- ✅ Filter by role (Admin / User)
+- ✅ Pagination (5 members per page)
+- ✅ Toast notifications for all actions
+- ✅ Loading states
+- ✅ Fully responsive layout
+- ✅ TypeScript throughout
+- ✅ React Hooks
+
+---
+
+## 📁 Project Structure
+
+```
+src/
+├── app/
+│   ├── api/
+│   │   └── users/
+│   │       ├── route.ts          # GET, POST /api/users
+│   │       └── [id]/
+│   │           └── route.ts      # PUT, DELETE /api/users/:id
+│   ├── page.tsx                  # Dashboard UI
+│   ├── layout.tsx                # Root layout
+│   └── globals.css               # Global styles
+├── lib/
+│   └── prisma.ts                 # Prisma client singleton
+prisma/
+├── schema.prisma                 # Database schema
+├── prisma.config.ts              # Prisma v7 config
+└── migrations/                   # Migration files
+```
+
+---
+
+## ⚙️ Setup Instructions
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/your-username/user-management.git
+cd user-management
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Install Prisma adapter
+
+```bash
+npm install @prisma/adapter-libsql
+```
+
+### 4. Set up Prisma config
+
+Make sure `prisma/prisma.config.ts` has:
+
+```ts
+import { defineConfig } from "prisma/config";
+
+export default defineConfig({
+  earlyAccess: true,
+  datasource: {
+    url: "file:./dev.db",
+  },
+});
+```
+
+And `src/lib/prisma.ts` has:
+
+```ts
+import { PrismaClient } from "@prisma/client";
+import { PrismaLibSql } from "@prisma/adapter-libsql";
+
+const adapter = new PrismaLibSql({
+  url: "file:./dev.db",
+});
+
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
+
+export const prisma =
+  globalForPrisma.prisma ?? new PrismaClient({ adapter });
+
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma;
+}
+```
+
+### 5. Run database migration
+
+```bash
+npx prisma migrate dev --name init
+npx prisma generate
+```
+
+### 6. Start the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 7. Open in browser
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🔌 API Endpoints
 
-To learn more about Next.js, take a look at the following resources:
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/users` | Fetch all users |
+| POST | `/api/users` | Create a new user |
+| PUT | `/api/users/:id` | Update a user |
+| DELETE | `/api/users/:id` | Delete a user |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🗄️ Database Schema
 
-## Deploy on Vercel
+```prisma
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  role      String   @default("User")
+  createdAt DateTime @default(now())
+}
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📸 Screenshots
+
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+### Add Member
+![Add Member](screenshots/addmember.png)
+
+### Edit Member
+![Edit Member](screenshots/editmember.png)
+
+### Delete Confirmation
+![Delete](screenshots/remove.png)
+
+---
+
+## 📝 Notes
+
+- This project uses **Prisma v7** which requires `prisma.config.ts` instead of `DATABASE_URL` in `.env`
+- SQLite database file (`dev.db`) is created automatically after migration
+- Pagination shows 5 members per page by default
+
+---
+
+## 👩‍💻 Author
+
+Built as part of a full-stack assignment using Next.js + Prisma + SQLite.
